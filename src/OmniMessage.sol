@@ -2,7 +2,7 @@
 pragma solidity >=0.8.17;
 
 // This line imports the NonblockingLzApp contract from LayerZero's solidity-examples Github repo.
-import "lib/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
+import "@layerzero-contracts/lzApp/NonblockingLzApp.sol";
 
 // This contract is inheritting from the NonblockingLzApp contract.
 contract OmniMessage is NonblockingLzApp {
@@ -15,17 +15,7 @@ contract OmniMessage is NonblockingLzApp {
 
     //This constructor initializes the contract with our source chain's _lzEndpoint.
     constructor(address _lzEndpoint) NonblockingLzApp(_lzEndpoint) Ownable(msg.sender) {
-        // Below is an "if statement" to simplify wiring our contract's together.
-        // In this case, we're auto-filling the dest chain Id based on the source endpoint.
-        // For example: if our source endpoint is Georli, then the destination is OP-Georli.
         endpointAddress = _lzEndpoint;
-
-        // NOTE: This is to simplify our tutorial, and is not standard wiring practice in LayerZero contracts.
-
-        // Wiring 1: If Source == Sepolia, then Destination Chain = Mumbai
-        // if (_lzEndpoint == 0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1) destChainId = 10109;
-        // // Wiring 2: If Source == Mumbai, then Destination Chain = Sepolia
-        // if (_lzEndpoint == 0xf69186dfBa60DdB133E91E9A4B5673624293d8F8) destChainId = 10161;
     }
 
     // This function is called when data is received. It overrides the equivalent function in the parent contract.
@@ -49,27 +39,5 @@ contract OmniMessage is NonblockingLzApp {
     // NOTE: In standard LayerZero contract's, this is done through SetTrustedRemote.
     function trustAddress(address _otherContract) public onlyOwner {
         trustedRemoteLookup[destChainId] = abi.encodePacked(_otherContract, address(this));
-    }
-
-    // This function estimates the fees for a LayerZero operation.
-    // It calculates the fees required on the source chain, destination chain, and by the LayerZero protocol itself.
-
-    // @param dstChainId The LayerZero endpoint ID of the destination chain where the transaction is headed.
-    // @param adapterParams The LayerZero relayer parameters used in the transaction.
-    // Default Relayer Adapter Parameters = 0x00010000000000000000000000000000000000000000000000000000000000030d40
-    // @param _message The message you plan to send across chains.
-
-    // @return nativeFee The estimated fee required denominated in the native chain's gas token.
-    function estimateFees(uint16 dstChainId, bytes calldata adapterParams, string memory _message)
-        public
-        view
-        returns (uint256 nativeFee, uint256 zroFee)
-    {
-        //Input the message you plan to send.
-        bytes memory payload = abi.encode(_message);
-
-        // Call the estimateFees function on the lzEndpoint contract.
-        // This function estimates the fees required on the source chain, the destination chain, and by the LayerZero protocol.
-        return lzEndpoint.estimateFees(dstChainId, address(this), payload, false, adapterParams);
     }
 }
