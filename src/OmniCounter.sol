@@ -10,7 +10,7 @@ contract OmniCounter is NonblockingLzApp {
     bytes public constant PAYLOAD = "\x01\x02\x03\x04";
     uint256 public counter;
 
-    constructor(address _lzEndpoint) NonblockingLzApp(_lzEndpoint) {}
+    constructor(address _lzEndpoint) NonblockingLzApp(_lzEndpoint) Ownable(msg.sender) {}
 
     function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory) internal override {
         counter += 1;
