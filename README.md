@@ -11,5 +11,5 @@
 
 ## Sources:
 
-https://github.com/St0rmBr3w/OmniMessage
-https://blog.developerdao.com/building-a-cross-chain-swap-with-layerzero
+- https://github.com/St0rmBr3w/OmniMessage
+- https://blog.developerdao.com/building-a-cross-chain-swap-with-layerzero
